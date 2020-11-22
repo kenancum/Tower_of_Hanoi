@@ -1,0 +1,165 @@
+﻿@page "/towerofhanai"
+<style>
+    h1 {
+        text-align: center;
+    }
+
+    p {
+        text-align: center;
+    }
+
+    div {
+        text-align: center;
+    }
+</style>
+<h1>Welcome to the Tower of Hanai</h1>
+@{
+    if (currentCount == 0)
+    {
+        h = new Data.HanoiGame();
+        t = new Data.HanoiTower(h);
+        h.addTower(t);
+        t.pushDisk(new Data.HanoiDisk(6, "orange"));
+        t.pushDisk(new Data.HanoiDisk(4, "blue"));
+        t.pushDisk(new Data.HanoiDisk(2, "yellow"));
+        h.addTower(new Data.HanoiTower(h));
+        h.addTower(new Data.HanoiTower(h));
+        height = h.svgHeight;
+        width = h.totalOfTowers() * h.svgWidth;
+        totalDisks = t.currentDiskCounter;
+    }
+}
+<div>
+    <svg width="@width" height="@height">
+
+        @for (int i = 0; i < h.totalOfTowers(); i++)
+        {
+            Data.HanoiTower currentTower = h.getTower(i);
+            colors.Add(passiveColor);
+            int towerid = i;
+            int xHor = (i) * 200;
+            int xVer = (i) * 200;
+            <svg class="tower" id=@towerid width="200" height="@height" x="@xHor" y="0" @onclick='(() => changeDisk(towerid))'>
+                <rect class="towerVertical" x="95" y="0" style=@colors[i] width="10" height="200"></rect>
+                <rect class="towerHorizontal" x="75" y="200" style=@colors[i] width="50" height="10"></rect>
+
+                @for (int j = 0; j < currentTower.hanoiDisks.Count; j++)
+                {
+                    string color = currentTower.hanoiDisks[j].color;
+                    int currentSize = currentTower.hanoiDisks[j].size;
+                    int size = (currentSize / 2) * 50;
+                    int diskId = j;
+                    int x = 100 - 25 * (currentSize / 2);
+                    int y = 200 - (30 * (j + 1));
+                    @if (currentTower.getNextDisk() != null)
+                    {
+                        <rect x="@x" y="@y" width=@size height="30" fill="@color" stroke="black" stroke-width="1"></rect>
+                    }
+                }
+            </svg>
+        }
+    </svg>
+    <hr>
+    <svg width="400" height="100">
+        <rect width="20" height="20"
+              stroke=black stroke-width="1"
+              fill="blue" />
+        <text x="30" y="15"
+              fill=black>: tower indicates taken tower</text>
+        <rect width="20" height="20" y="30"
+              stroke=black stroke-width="1"
+              fill="darkgreen" />
+        <text x="30" y="45"
+              fill=black>: tower indicates target tower</text>
+        <rect width="20" height="20" y="60"
+              stroke=black stroke-width="1"
+              fill="black" />
+        <text x="30" y="75"
+              fill=black>: tower indicates unselected tower</text>
+    </svg>
+</div>
+@if (!checkCondition)
+{
+    <hr>
+    <h1>Wrong Move</h1>
+}
+@if (winCondition)
+{
+    <hr>
+    <h1>You Win!</h1>
+}
+
+@code {
+    private string takenColor = "fill:rgb(0,0,255);";
+    private string targetColor = "fill:rgb(0,120,0);";
+    private string passiveColor = "fill:rgb(0,0,0);";
+    private List<string> colors = new List<string>();
+    private Data.HanoiGame h;
+
+    private int height;
+    private int width;
+
+    private int takenDiskSize;
+    private int targetDiskSize;
+
+    private Data.HanoiTower t;
+    private int currentCount = 0;
+    private int takenTower, targetTower;
+    private int totalDisks = 0;
+
+    private bool checkCondition = true;
+    private bool winCondition = false;
+
+    private void changeDisk(int towerID)
+    {
+        currentCount++;
+        for (int i = 0; i < h.totalOfTowers(); i++)
+        {
+            h.getTower(i).selection(false);
+        }
+        h.getTower(towerID).selection(true);
+        for (int i = 0; i < h.totalOfTowers(); i++)
+        {
+            if (h.getTower(i).is_selected())
+            {
+                if (currentCount % 2 == 0)
+                {
+                    colors[towerID] = targetColor;
+                    targetTower = towerID;
+                }
+                else
+                {
+                    colors[towerID] = takenColor;
+                    takenTower = towerID;
+                }
+            }
+            else
+                colors[i] = passiveColor;
+        }
+        if (currentCount % 2 == 0 && currentCount != 0)
+        {
+            if (h.getTower(takenTower).getNextDisk() != null)
+                takenDiskSize = h.getTower(takenTower).getNextDisk().size;
+            else
+                takenDiskSize = 0;
+
+            if (h.getTower(targetTower).getNextDisk() != null)
+                targetDiskSize = h.getTower(targetTower).getNextDisk().size;
+            else
+                targetDiskSize = 0;
+
+            if (takenDiskSize > targetDiskSize && targetDiskSize != 0)
+            {
+                checkCondition = false;
+                colors[targetTower] = passiveColor;
+                targetTower = takenTower;
+            }
+            else
+                checkCondition = true;
+            h.getTower(targetTower).pushDisk(h.getTower(takenTower).popDisk());
+        }
+
+        if (h.getTower(h.totalOfTowers()-1).hanoiDisks.Count == totalDisks)
+            winCondition = true;
+    }
+}
