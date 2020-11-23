@@ -1,14 +1,6 @@
 ﻿@page "/towerofhanai"
 <style>
-    h1 {
-        text-align: center;
-    }
-
-    p {
-        text-align: center;
-    }
-
-    div {
+    h1, p, div {
         text-align: center;
     }
 </style>
@@ -37,8 +29,8 @@
             Data.HanoiTower currentTower = h.getTower(i);
             colors.Add(passiveColor);
             int towerid = i;
-            int xHor = (i) * 200;
-            int xVer = (i) * 200;
+            int xHor = (i) * h.svgWidth;
+
             <svg class="tower" id=@towerid width="200" height="@height" x="@xHor" y="0" @onclick='(() => changeDisk(towerid))'>
                 <rect class="towerVertical" x="95" y="0" style=@colors[i] width="10" height="200"></rect>
                 <rect class="towerHorizontal" x="75" y="200" style=@colors[i] width="50" height="10"></rect>
@@ -159,7 +151,8 @@
             h.getTower(targetTower).pushDisk(h.getTower(takenTower).popDisk());
         }
 
-        if (h.getTower(h.totalOfTowers()-1).hanoiDisks.Count == totalDisks)
+        if (h.getTower(h.totalOfTowers() - 1).hanoiDisks.Count == totalDisks)
             winCondition = true;
     }
+
 }
