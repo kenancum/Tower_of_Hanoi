@@ -1,10 +1,10 @@
-﻿@page "/towerofhanai"
+﻿@page "/towerofhanoi"
 <style>
     h1, p, div {
         text-align: center;
     }
 </style>
-<h1>Welcome to the Tower of Hanai</h1>
+<h1>Welcome to the Tower of Hanoi</h1>
 @{
     if (currentCount == 0)
     {
@@ -19,6 +19,7 @@
         height = h.svgHeight;
         width = h.totalOfTowers() * h.svgWidth;
         totalDisks = t.currentDiskCounter;
+
     }
 }
 <div>
@@ -39,6 +40,7 @@
                 {
                     string color = currentTower.hanoiDisks[j].color;
                     int currentSize = currentTower.hanoiDisks[j].size;
+
                     int size = (currentSize / 2) * 50;
                     int diskId = j;
                     int x = 100 - 25 * (currentSize / 2);
@@ -57,17 +59,17 @@
               stroke=black stroke-width="1"
               fill="blue" />
         <text x="30" y="15"
-              fill=black>: tower indicates taken tower</text>
+              fill=black>: colored tower indicates taken tower</text>
         <rect width="20" height="20" y="30"
               stroke=black stroke-width="1"
               fill="darkgreen" />
         <text x="30" y="45"
-              fill=black>: tower indicates target tower</text>
+              fill=black>: colored tower indicates target tower</text>
         <rect width="20" height="20" y="60"
               stroke=black stroke-width="1"
               fill="black" />
         <text x="30" y="75"
-              fill=black>: tower indicates unselected tower</text>
+              fill=black>: colored tower indicates unselected tower</text>
     </svg>
 </div>
 @if (!checkCondition)
@@ -106,9 +108,8 @@
     {
         currentCount++;
         for (int i = 0; i < h.totalOfTowers(); i++)
-        {
             h.getTower(i).selection(false);
-        }
+
         h.getTower(towerID).selection(true);
         for (int i = 0; i < h.totalOfTowers(); i++)
         {

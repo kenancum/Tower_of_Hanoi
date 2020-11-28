@@ -10,6 +10,7 @@ namespace Tower_of_Hanoi.Data
         public int svgHeight = 210;
         public int svgWidth = 200;
         List<HanoiTower> hanoiTowers = new List<HanoiTower>();
+        
 
         public HanoiGame()
         {

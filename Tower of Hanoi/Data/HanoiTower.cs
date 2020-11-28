@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Tower_of_Hanoi.Data
 {
-    public class HanoiTower : HanoiGame
+    public class HanoiTower
     {
         private bool selected = false;
         public int currentDiskCounter = 0;
